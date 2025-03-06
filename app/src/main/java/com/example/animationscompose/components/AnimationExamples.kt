@@ -1,6 +1,10 @@
 package com.example.animationscompose.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -18,25 +22,38 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ColorAnimationSimple(modifier: Modifier) {
-    Column(modifier = modifier) {
-        var firstColor by rememberSaveable { mutableStateOf(false) }
-        val realColor = if (firstColor) Color.Red else Color.Blue
+    var firstColor by rememberSaveable { mutableStateOf(false) }
+    var showBox by rememberSaveable { mutableStateOf(true) }
+    val realColor by animateColorAsState(
+        targetValue = if (firstColor) Color.Red else Color.Blue, animationSpec = tween(
+            durationMillis = 500,
+            easing = FastOutSlowInEasing
+        ), finishedListener = {
+            showBox = false
+        }
+    )
+    if (showBox) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .size(100.dp)
                 .background(realColor)
                 .clickable { firstColor = !firstColor }) {
 
         }
-        Spacer(modifier = Modifier.size(200.dp))
-        var secondColor by rememberSaveable { mutableStateOf(false) }
-        val realColorTwo by animateColorAsState(targetValue = if (secondColor) Color.Red else Color.Blue)
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .background(realColorTwo)
-                .clickable { secondColor = !secondColor }) {
+    }
+}
 
-        }
+@Composable
+fun SizeAnimation() {
+    var smallSize by rememberSaveable {
+        mutableStateOf(true)
+    }
+    val size by animateDpAsState(targetValue = if (smallSize) 50.dp else 100.dp)
+    Box(
+        modifier = Modifier
+            .size(size)
+            .background(Color.Cyan)
+            .clickable { smallSize = !smallSize }) {
+
     }
 }
