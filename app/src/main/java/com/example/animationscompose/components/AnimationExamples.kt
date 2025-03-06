@@ -1,5 +1,7 @@
 package com.example.animationscompose.components
 
+import android.opengl.Visibility
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -10,7 +12,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -52,7 +57,9 @@ fun SizeAnimation() {
         targetValue = if (smallSize) 50.dp else 100.dp, animationSpec = tween(
             durationMillis = 500
         ), finishedListener = {
-            if(!smallSize) { TODO() }
+            if (!smallSize) {
+                TODO()
+            }
         }
     )
     Box(
@@ -61,5 +68,25 @@ fun SizeAnimation() {
             .background(Color.Cyan)
             .clickable { smallSize = !smallSize }) {
 
+    }
+}
+
+@Composable
+fun VisibilityBasic() {
+    var isVisible by rememberSaveable {
+        mutableStateOf(true)
+    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        Button(onClick = { isVisible = !isVisible }) {
+            Text(text = "Mostrar/Ocultar")
+        }
+        Spacer(modifier = Modifier.size(50.dp))
+        AnimatedVisibility(isVisible) {
+            Box(
+                modifier = Modifier
+                    .size(150.dp)
+                    .background(Color.Red)
+            )
+        }
     }
 }
