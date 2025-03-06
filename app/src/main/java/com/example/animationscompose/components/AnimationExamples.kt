@@ -5,8 +5,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -73,15 +79,24 @@ fun SizeAnimation() {
 
 @Composable
 fun VisibilityBasic() {
-    var isVisible by rememberSaveable {
-        mutableStateOf(true)
+    val isVisible = rememberSaveable {
+        MutableTransitionState(true)
     }
     Column(modifier = Modifier.fillMaxSize()) {
-        Button(onClick = { isVisible = !isVisible }) {
+        Button(onClick = { isVisible.targetState = !isVisible.targetState }) {
             Text(text = "Mostrar/Ocultar")
         }
         Spacer(modifier = Modifier.size(50.dp))
-        AnimatedVisibility(isVisible) {
+        AnimatedVisibility(
+            visibleState = isVisible,
+            enter = slideInVertically() + fadeIn(),
+            exit = slideOutHorizontally(
+                targetOffsetX = { it * 2 },
+                animationSpec = tween(
+                    durationMillis = 700
+                )
+            )
+        ) {
             Box(
                 modifier = Modifier
                     .size(150.dp)
