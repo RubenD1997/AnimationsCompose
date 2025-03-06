@@ -2,6 +2,7 @@ package com.example.animationscompose.components
 
 import android.opengl.Visibility
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -20,7 +21,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlin.random.Random.Default.nextInt
 
 @Composable
 fun ColorAnimationSimple(modifier: Modifier) {
@@ -104,4 +109,42 @@ fun VisibilityBasic() {
             )
         }
     }
+}
+
+@Composable
+fun CrossFadeExample() {
+    var myComponentType: ComponentType by rememberSaveable {
+        mutableStateOf(ComponentType.Text)
+    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        Button(onClick = { myComponentType = getComponentTypeRandom() }) {
+            Text("Cambiar componente")
+        }
+        Crossfade(targetState = myComponentType, label = "") { myComponentType ->
+            when (myComponentType) {
+                ComponentType.Image -> Icon(Icons.Default.Face, contentDescription = "Face")
+                ComponentType.Text -> Text("Hello Mr Ruben")
+                ComponentType.Box -> Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .background(Color.Green)
+                )
+
+                ComponentType.Error -> Text("Error")
+            }
+        }
+    }
+}
+
+fun getComponentTypeRandom(): ComponentType {
+    return when ( nextInt(from = 0, until = 3)) {
+        0 -> ComponentType.Image
+        1 -> ComponentType.Text
+        2 -> ComponentType.Box
+        else -> ComponentType.Error
+    }
+}
+
+enum class ComponentType() {
+    Image, Text, Box, Error
 }
